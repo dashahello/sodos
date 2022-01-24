@@ -1,4 +1,4 @@
-import { Task } from 'src/users/tasks/entities/task.entity';
+import { Task } from 'src/Users/Tasks/entities/task.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,7 +8,7 @@ import {
   Unique,
 } from 'typeorm';
 import { UserInterface } from '../interfaces/user.interface';
-import { Permission } from '../permissions/entities/permission.entity';
+import { Permission } from '../Permissions/entities/permission.entity';
 
 @Entity()
 @Unique('email', ['email'])

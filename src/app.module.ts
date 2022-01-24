@@ -3,10 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { PermissionsModule } from './users/permissions/permissions.module';
-import { TasksModule } from './users/tasks/tasks.module';
-import { AuthModule } from './users/auth/auth.module';
+import { UsersModule } from './Users/users.module';
+import { PermissionsModule } from './Users/Permissions/permissions.module';
+import { TasksModule } from './Users/Tasks/tasks.module';
+import { AuthModule } from './Users/Auth/auth.module';
 
 @Module({
   imports: [

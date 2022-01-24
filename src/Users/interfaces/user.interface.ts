@@ -1,5 +1,5 @@
-import { Permission } from '../permissions/entities/permission.entity';
-import { Task } from '../tasks/entities/task.entity';
+import { Permission } from '../Permissions/entities/permission.entity';
+import { Task } from '../Tasks/entities/task.entity';
 
 export interface UserInterface {
   id?: number;
