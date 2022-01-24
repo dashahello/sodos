@@ -6,7 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -26,13 +26,16 @@ export class TasksController {
   }
 
   @Get(':taskId')
-  async findOne(@Param('userId') userId: number, @Param('taskId') id: number) {
+  async findOne(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('taskId') id: number,
+  ) {
     return await this.tasksService.findOneById(id);
   }
 
   @Post()
   async create(
-    @Param('userId') userId: number,
+    @Param('userId', ParseIntPipe) userId: number,
     @Body() createTaskDto: CreateTaskDto,
   ) {
     // @TODO
@@ -47,8 +50,11 @@ export class TasksController {
     return await this.tasksService.create(createTaskDto);
   }
 
-  @Put(':taskId')
-  update(@Param('taskId') id: number, @Body() updateTaskDto: UpdateTaskDto) {
+  @Patch(':taskId')
+  update(
+    @Param('taskId', ParseIntPipe) id: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
     return this.tasksService.update(id, updateTaskDto);
   }
 

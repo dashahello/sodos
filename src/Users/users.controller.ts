@@ -1,72 +1,62 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
-  Delete,
-  Put,
-  ConflictException,
   Session,
   UnauthorizedException,
+  UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserPreviewDto } from './dto/user-preview.dto';
 import { UserProfileDto } from './dto/user-profile.dto';
+import { IsAuthorizedGuard } from './Auth/guards/isAuthorized.guard';
+import { PermissionsService } from './Permissions/permissions.service';
 
 @Controller('users')
+@UseGuards(IsAuthorizedGuard)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    // @TODO
+    // find the way to check permissions
+    // import PermissionsService
+    private readonly usersService: UsersService, // private readonly permissionService: PermissionsService,
+  ) {}
 
   @Get()
-  async findAll(@Session() session: { loggedIn: boolean }) {
-    if (session.loggedIn !== true) {
-      throw new UnauthorizedException('Please log in first');
-    }
-
+  async findAll() {
     const users = await this.usersService.findAll();
     return users.map((user) => new UserPreviewDto(user));
   }
 
-  // @TODO
-  // returned type of each func
-
   @Get(':userId')
-  async findOne(@Param('id') id: string) {
+  async findOne(
+    @Session() session: { userId: number },
+    @Param('userId', ParseIntPipe) id: string,
+  ) {
+    // @TODO
+    // user can only view pforfile of other user if he is that user or he has permission
+
     const user = await this.usersService.findOne(id);
 
     return new UserProfileDto(user);
   }
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    // @TODO
-    // handle bad requests
-    const newUser = await this.usersService.create(createUserDto);
-
-    return new UserProfileDto(newUser);
-  }
-
-  @Put(':userId')
+  @Patch(':userId')
   async update(
-    // @Session() session: { loggedIn: boolean },
-    @Param('userId') id: string,
+    @Session() session: { userId: number },
+    @Param('userId', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    // if(session.loggedIn !== true) {
+    if (id !== session.userId) {
+      throw new UnauthorizedException();
+    }
 
-    // }
+    await this.usersService.update(id, updateUserDto);
 
-    const user = await this.usersService.update(id, updateUserDto);
-
-    return user;
+    return { result: 'success' };
   }
-
-  // @Delete(':userId')
-  // remove(@Param('userId') id: string) {
-  //   return this.usersService.delete(id);
-  // }
 }

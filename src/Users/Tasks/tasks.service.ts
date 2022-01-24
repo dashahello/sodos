@@ -33,14 +33,6 @@ export class TasksService {
     //   .select(['task.title', 'user.username'])
     //   .getOne();
 
-    // // getting author
-    // const t2 = await this.tasksRepository
-    //   .createQueryBuilder('task')
-    //   .leftJoinAndSelect('task.author', 'user')
-    //   .where('task.id = :taskId', { taskId: id })
-    //   .select(['task.title', 'user.username'])
-    //   .getOne();
-
     // console.log(t);
 
     // return t;

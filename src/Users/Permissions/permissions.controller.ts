@@ -3,69 +3,113 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  Put,
-  HttpException,
-  HttpStatus,
+  UseGuards,
+  Session,
+  ConflictException,
+  ParseIntPipe,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
 import { CreatePermissionDto } from './dto/create-permission.dto';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { IsAuthorizedGuard } from '../Auth/guards/isAuthorized.guard';
 
 @Controller('users/:userId/permissions')
+@UseGuards(IsAuthorizedGuard)
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   // @TODO
-  // create dto fro returned value?
+  // create dto for returned value?
   @Get()
-  async findAll(@Param('userId') userId: number) {
-    return await this.permissionsService.findAll({
-      where: [{ ownerId: userId }, { visitorId: userId }],
+  async findAll(
+    @Session() session: { userId: number },
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    if (userId === session.userId) {
+      return await this.permissionsService.findAll({
+        where: [{ ownerId: session.userId }, { visitorId: session.userId }],
+      });
+    }
 
-      // to get whole permission owner object
-      // relations: ['owner'],
+    return await this.permissionsService.findAll({
+      where: [
+        { ownerId: session.userId, visitorId: userId },
+        { ownerId: userId, visitorId: session.userId },
+        // relations: ['owner'],
+      ],
     });
   }
 
   @Get(':permissionId')
   async findOne(
-    @Param('userId') userId: number,
-    @Param('permissionId') id: number,
+    @Session() session: { userId: number },
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('permissionId', ParseIntPipe) id: number,
   ) {
+    if (userId === session.userId) {
+      return await this.permissionsService.findOne(id, {
+        where: [{ ownerId: session.userId }, { visitorId: session.userId }],
+      });
+    }
+
     return await this.permissionsService.findOne(id, {
-      where: [{ ownerId: userId }, { visitorId: userId }],
+      where: [
+        { ownerId: session.userId, visitorId: userId },
+        { ownerId: userId, visitorId: session.userId },
+      ],
     });
   }
 
   @Post()
   async create(
-    @Param('userId') userId: number,
+    @Session() session: { userId: number },
+    @Param('userId', ParseIntPipe) userId: number,
     @Body() createPermissionDto: CreatePermissionDto,
   ) {
-    createPermissionDto.ownerId = userId;
+    if (userId === session.userId) {
+      throw new ConflictException();
+    }
 
-    return await this.permissionsService.create(createPermissionDto);
+    if (
+      await this.permissionsService.count({
+        where: [{ ownerId: session.userId, visitorId: userId }],
+      })
+    ) {
+      throw new ConflictException('Permission already exists');
+    }
+
+    createPermissionDto.ownerId = session.userId;
+    createPermissionDto.visitorId = userId;
+
+    try {
+      return await this.permissionsService.create(createPermissionDto);
+    } catch (error) {
+      if (error.code.includes('ER_NO_REFERENCED_ROW')) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   @Delete(':permissionId')
   async remove(
-    @Param('userId') userId: number,
+    @Session() session: { userId: number },
+    @Param('userId', ParseIntPipe) userId: number,
     @Param('permissionId') id: number,
   ) {
-    // @TODO
-    // implement this setup with sessionUserId
-    // should only allow to delete if sessionId === permission owner id
-    // const permissionToDelete = await this.permissionsService.findOne(id, {
-    //   where: { ownerId: sessionUserId },
-    // });
+    if (
+      !(await this.permissionsService.findOne(id, {
+        where: { ownerId: session.userId },
+      }))
+    ) {
+      throw new NotFoundException();
+    }
 
-    // if (!permissionToDelete) {
-    //   throw new HttpException('Forbiden', HttpStatus.FORBIDDEN);
-    // }
-
-    return this.permissionsService.remove(id);
+    await this.permissionsService.remove(id);
+    return { result: 'success' };
   }
 }

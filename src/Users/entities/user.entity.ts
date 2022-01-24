@@ -39,17 +39,7 @@ export class User {
 
   @OneToMany(() => Task, (task) => task.owner, { eager: true, cascade: true })
   tasks: Task[];
-  //-------------------------
-  // @OneToMany(() => Permission, (permission) => permission.user, {
-  //   eager: true,
-  //   cascade: true,
-  // })
-  // permissions: Permission[];
 
-  // @OneToMany(() => Permission, (permission) => permission.owner, {
-  //   eager: true,
-  // })
-  //-----------------
   @OneToMany(() => Permission, (permission) => permission.owner, {
     eager: true,
     cascade: true,

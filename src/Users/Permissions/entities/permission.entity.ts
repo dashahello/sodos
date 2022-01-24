@@ -1,24 +1,11 @@
 import { User } from 'src/Users/entities/user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { PermissionInterface } from '../interfaces/permisson.interface';
 
 @Entity()
 export class Permission {
   @PrimaryGeneratedColumn()
   id: number;
-
-  // @ManyToOne(() => User, (user) => user.permissions)
-  // // @JoinColumn()
-  // user: User;
-
-  // @Column()
-  // userId: number;
 
   // @ManyToOne(() => User, (user) => user.permissionsFor)
   @ManyToOne(() => User)
