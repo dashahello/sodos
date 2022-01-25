@@ -10,5 +10,5 @@ export interface TaskInterface {
   updatedAt: Date;
   owner: number;
   author: number;
-  modifier: number | undefined;
+  modifier: number | null;
 }

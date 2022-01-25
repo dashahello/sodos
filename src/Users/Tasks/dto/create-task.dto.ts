@@ -5,7 +5,7 @@ export class CreateTaskDto {
   readonly title: string;
   readonly description: string;
   readonly done: boolean;
-  ownerId: number | undefined;
-  // authorId: number | undefined;
-  // modifierId: number | undefined;
+  ownerId: number;
+  authorId: number;
+  modifierId: number | null;
 }

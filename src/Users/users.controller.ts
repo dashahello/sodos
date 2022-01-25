@@ -15,6 +15,7 @@ import { UserPreviewDto } from './dto/user-preview.dto';
 import { UserProfileDto } from './dto/user-profile.dto';
 import { IsAuthorizedGuard } from './Auth/guards/isAuthorized.guard';
 import { PermissionsService } from './Permissions/permissions.service';
+import { HasAccessAuthGuard } from './guards/hasAccessAuth.guard';
 
 @Controller('users')
 @UseGuards(IsAuthorizedGuard)
@@ -33,16 +34,17 @@ export class UsersController {
   }
 
   @Get(':userId')
+  @UseGuards(HasAccessAuthGuard)
   async findOne(
     @Session() session: { userId: number },
-    @Param('userId', ParseIntPipe) id: string,
+    @Param('userId', ParseIntPipe) id: number,
   ) {
     // @TODO
     // user can only view pforfile of other user if he is that user or he has permission
 
-    const user = await this.usersService.findOne(id);
+    return await this.usersService.findOne(id);
 
-    return new UserProfileDto(user);
+    // return new UserProfileDto(user);
   }
 
   @Patch(':userId')

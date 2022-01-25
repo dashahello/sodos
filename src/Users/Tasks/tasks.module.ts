@@ -4,10 +4,15 @@ import { TasksController } from './tasks.controller';
 import { UsersModule } from 'src/Users/users.module';
 import { Task } from './entities/task.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Permission } from '../Permissions/entities/permission.entity';
+import { PermissionsService } from '../Permissions/permissions.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task])],
+  imports: [
+    TypeOrmModule.forFeature([Permission]),
+    TypeOrmModule.forFeature([Task]),
+  ],
   controllers: [TasksController],
-  providers: [TasksService],
+  providers: [PermissionsService, TasksService],
 })
 export class TasksModule {}

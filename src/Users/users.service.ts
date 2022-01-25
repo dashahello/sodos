@@ -23,20 +23,34 @@ export class UsersService {
 
   // @TODO
   // id type ?
-  async findOne(id: string): Promise<User> {
-    return await this.usersRepository.findOne(id);
-  }
-
-  // async findOne(id: string, options: any = {}): Promise<User> {
-  //   const user = await this.usersRepository.findOne(id);
-
-  //   if (options.hidePermissions) {
-  //     delete user.permissionsFor;
-  //     delete user.permissionsTo;
-  //   }
-
-  //   return user;
+  // async findOne(id: string): Promise<User> {
+  //   return await this.usersRepository.findOne(id);
   // }
+
+  async findOne(id: any, options?: any): Promise<User> {
+    // const user = await this.usersRepository.findOne(id, options);
+
+    // const t = await this.usersRepository
+    //   .createQueryBuilder('user')
+    //   .leftJoinAndSelect('user.permissionsFor', 'pemission')
+    //   // .leftJoinAndSelect('user.permissionsFor', 'permission')
+    //   .where('user.id = :userId', { userId: id })
+    //   .select(['user', 'pemission'])
+    //   .getOne();
+
+    // if (options.hidePermissions) {
+    //   delete user.permissionsFor;
+    //   delete user.permissionsTo;
+    // }
+
+    // return user;
+
+    // console.log('RESULT', t);
+
+    // return t;
+
+    return await this.usersRepository.findOne(id, options);
+  }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<any> {
     await this.usersRepository.update(id, updateUserDto);

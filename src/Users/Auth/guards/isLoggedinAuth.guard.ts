@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ConflictException,
+} from '@nestjs/common';
 
 @Injectable()
 export class IsLoggedinAuthGuard implements CanActivate {
@@ -6,7 +11,9 @@ export class IsLoggedinAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     if (request.session.loggedIn === true) {
-      return false;
+      throw new ConflictException(
+        'Cannot login whilst already being logged in',
+      );
     }
 
     return true;

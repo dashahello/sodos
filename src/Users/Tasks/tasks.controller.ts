@@ -7,59 +7,66 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
+  Session,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Task } from './entities/task.entity';
+import { IsAuthorizedGuard } from '../Auth/guards/isAuthorized.guard';
+import { AccessToAllTasksGuard } from './guards/accessToAllTasks.guard';
+import { AccessToSingleTaskGuard } from './guards/accessToSingleTask.guard';
 
 @Controller('users/:userId/tasks')
+@UseGuards(IsAuthorizedGuard)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  async findAll(@Param('userId') userId: number) {
+  @UseGuards(AccessToAllTasksGuard)
+  async findAll(@Param('userId', ParseIntPipe) userId: number) {
     return await this.tasksService.findAll({
       where: { ownerId: userId },
-      relations: ['owner'],
     });
   }
 
   @Get(':taskId')
-  async findOne(
-    @Param('userId', ParseIntPipe) userId: number,
-    @Param('taskId') id: number,
-  ) {
-    return await this.tasksService.findOneById(id);
+  @UseGuards(AccessToSingleTaskGuard)
+  async findOne(@Param('taskId') taskId: number) {
+    return await this.tasksService.findOneById(taskId);
   }
 
   @Post()
+  @UseGuards(AccessToAllTasksGuard)
   async create(
+    @Session() session: { userId: number },
     @Param('userId', ParseIntPipe) userId: number,
     @Body() createTaskDto: CreateTaskDto,
   ) {
-    // @TODO
-    // authorId and modifierId from session
-    // createTaskDto.ownerId = userId;
-
-    // const _createTaskDto: any = { ...createTaskDto };
-    // _createTaskDto.ownerId = userId;
-
     createTaskDto.ownerId = userId;
-
+    createTaskDto.authorId = session.userId;
+    createTaskDto.modifierId = null;
     return await this.tasksService.create(createTaskDto);
   }
 
   @Patch(':taskId')
-  update(
-    @Param('taskId', ParseIntPipe) id: number,
+  @UseGuards(AccessToSingleTaskGuard)
+  async update(
+    @Session() session: { userId: number },
+    @Param('taskId', ParseIntPipe) taskId: number,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
-    return this.tasksService.update(id, updateTaskDto);
+    updateTaskDto.modifierId = session.userId;
+
+    await this.tasksService.update(taskId, updateTaskDto);
+
+    return { result: 'success' };
   }
 
   @Delete(':taskId')
-  async remove(@Param('taskId') id: number) {
-    return await this.tasksService.remove(id);
+  @UseGuards(AccessToSingleTaskGuard)
+  async remove(@Param('taskId') taskId: number) {
+    await this.tasksService.remove(taskId);
+    return { result: 'success' };
   }
 }

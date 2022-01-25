@@ -31,6 +31,8 @@ export class PermissionsController {
     if (userId === session.userId) {
       return await this.permissionsService.findAll({
         where: [{ ownerId: session.userId }, { visitorId: session.userId }],
+        relations: ['owner'],
+        // should be done througn createQueryBuilder('user') in permissions service
       });
     }
 
@@ -38,8 +40,8 @@ export class PermissionsController {
       where: [
         { ownerId: session.userId, visitorId: userId },
         { ownerId: userId, visitorId: session.userId },
-        // relations: ['owner'],
       ],
+      relations: ['owner'],
     });
   }
 
@@ -55,7 +57,7 @@ export class PermissionsController {
       });
     }
 
-    return await this.permissionsService.findOne(id, {
+    await this.permissionsService.findOne(id, {
       where: [
         { ownerId: session.userId, visitorId: userId },
         { ownerId: userId, visitorId: session.userId },

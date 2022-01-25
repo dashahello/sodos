@@ -40,9 +40,8 @@ export class Task {
 
   @ManyToOne(() => User)
   author: User;
-  // @TODO
-  // undo nullable when authorId will come from session
-  @Column({ nullable: true })
+
+  @Column()
   authorId: number;
 
   @ManyToOne(() => User)

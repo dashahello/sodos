@@ -54,7 +54,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(IsAuthorizedGuard) // so user can not logout if he is not logged in
+  // @UseGuards(IsAuthorizedGuard) // so user can not logout if he is not logged in
   logOut(@Session() session: { loggedIn: boolean; userId: number | null }) {
     session.loggedIn = false;
     session.userId = null;
