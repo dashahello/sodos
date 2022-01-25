@@ -2,33 +2,25 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
-import { PermissionsService } from '../Permissions/permissions.service';
+import { PermissionsService } from '../permissions.service';
 
 @Injectable()
-export class HasAccessAuthGuard implements CanActivate {
+export class PermissionExistanceGuard implements CanActivate {
   constructor(private readonly permissionsService: PermissionsService) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const { session, params } = context.switchToHttp().getRequest();
 
     const sessionUserId = parseInt(session.userId);
-    const paramsUserId = parseInt(params.userId);
-
-    if (paramsUserId === sessionUserId) {
-      return true;
-    }
+    const permissionId = parseInt(params.permissionId);
 
     if (
       !(await this.permissionsService.count({
-        where: {
-          ownerId: paramsUserId,
-          visitorId: sessionUserId,
-        },
+        where: { id: permissionId, ownerId: sessionUserId },
       }))
     ) {
-      throw new UnauthorizedException('You do not have access to this user');
+      throw new NotFoundException('Permission not found');
     }
 
     return true;

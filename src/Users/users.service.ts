@@ -52,6 +52,10 @@ export class UsersService {
     return await this.usersRepository.findOne(id, options);
   }
 
+  async count(options?: object) {
+    return await this.usersRepository.count(options);
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<any> {
     await this.usersRepository.update(id, updateUserDto);
   }
