@@ -11,7 +11,7 @@ import { UserInterface } from '../interfaces/user.interface';
 import { Permission } from '../Permissions/entities/permission.entity';
 
 @Entity()
-@Unique('email', ['email'])
+@Unique('username', ['username'])
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -31,7 +31,12 @@ export class User {
   })
   password: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: false, unique: false })
+  @Column({
+    type: 'varchar',
+    default: 'Happy to use Sodos :)',
+    nullable: false,
+    unique: false,
+  })
   status: string;
 
   @CreateDateColumn({ update: false })

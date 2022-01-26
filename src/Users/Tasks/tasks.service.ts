@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskCreateRequestDto } from './dto/task.createRequest.dto';
+import { TaskUpdateRequestDto } from './dto/task.updateRequest.dto';
 import { Task } from './entities/task.entity';
 
 @Injectable()
@@ -12,27 +12,39 @@ export class TasksService {
     private tasksRepository: Repository<Task>,
   ) {}
 
-  async findAll(options?: object) {
+  async findAll(options?: object): Promise<Task[]> {
     return await this.tasksRepository.find(options);
   }
 
-  async findOneById(id: number, options?: object) {
+  async findOneById(id: number, options?: object): Promise<Task> {
     return await this.tasksRepository.findOne(id, options);
   }
 
-  async count(options?: object) {
+  async count(options?: object): Promise<number> {
     return await this.tasksRepository.count(options);
   }
 
-  async create(createTaskDto: CreateTaskDto) {
-    return await this.tasksRepository.save(createTaskDto);
+  async create(
+    taskRequest: TaskCreateRequestDto,
+    ownerId: number,
+    authorId: number,
+  ): Promise<Task> {
+    taskRequest.ownerId = ownerId;
+    taskRequest.authorId = authorId;
+    taskRequest.modifierId = null;
+    return await this.tasksRepository.save(taskRequest);
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<void> {
-    await this.tasksRepository.update(id, updateTaskDto);
+  async update(
+    id: number,
+    taskRequest: TaskUpdateRequestDto,
+    modifierId: number,
+  ): Promise<void> {
+    taskRequest.modifierId = modifierId;
+    await this.tasksRepository.update(id, taskRequest);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<void> {
     await this.tasksRepository.delete(id);
   }
 }

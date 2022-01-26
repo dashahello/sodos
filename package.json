@@ -1,8 +1,8 @@
 {
-  "name": "to-do-app",
+  "name": "sodos-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "The Social Todos App",
+  "author": "https://gitlab.com/dashahello",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -26,6 +26,9 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
+    "cors": "^2.8.5",
     "express-mysql-session": "^2.1.7",
     "mysql2": "^2.3.3",
     "node-fetch": "^2.6.7",

@@ -2,6 +2,8 @@ import { User } from 'src/Users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { PermissionInterface } from '../interfaces/permisson.interface';
 
+// @TODO
+// implement interfaces properly with many to one columns
 @Entity()
 export class Permission {
   @PrimaryGeneratedColumn()
@@ -12,7 +14,7 @@ export class Permission {
   // @JoinColumn()
   owner: User;
 
-  @Column()
+  @Column({ nullable: false })
   ownerId: number;
 
   @ManyToOne(() => User, (user) => user.permissionsTo)
@@ -20,6 +22,6 @@ export class Permission {
 
   // @TODO
   // fix nullable: true when sessions are set up
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   visitorId: number;
 }

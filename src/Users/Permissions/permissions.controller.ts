@@ -10,11 +10,12 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
-import { CreatePermissionDto } from './dto/create-permission.dto';
 import { IsAuthorizedGuard } from '../Auth/guards/isAuthorized.guard';
-import { OwnerGuard } from './guards/owner.guard.';
 import { PermissionExistanceGuard } from './guards/permissionExistance.guard';
 import { AbilityToCreatePermissionGuard } from './guards/abilityToCreatePermission.guard';
+import { OwnerGuard } from '../guards/owner.guard.';
+import { PermissionRequestnDto } from './dto/permission.request.dto';
+import { PermissionResponseDto } from './dto/permission.response.dto';
 
 @Controller('users/:userId/permissions')
 @UseGuards(IsAuthorizedGuard)
@@ -34,7 +35,7 @@ export class PermissionsController {
   }
 
   @Get(':permissionId')
-  @UseGuards(OwnerGuard)
+  @UseGuards(OwnerGuard, PermissionExistanceGuard)
   async findOne(
     @Session() session: { userId: number },
     @Param('permissionId', ParseIntPipe) permissionId: number,
@@ -52,12 +53,15 @@ export class PermissionsController {
   async create(
     @Session() session: { userId: number },
     @Param('userId', ParseIntPipe) userId: number,
-    @Body() createPermissionDto: CreatePermissionDto,
-  ) {
-    createPermissionDto.ownerId = session.userId;
-    createPermissionDto.visitorId = userId;
+    @Body() permissionRequest: PermissionRequestnDto,
+  ): Promise<PermissionResponseDto> {
+    const newPermission = await this.permissionsService.create(
+      permissionRequest,
+      session.userId,
+      userId,
+    );
 
-    return await this.permissionsService.create(createPermissionDto);
+    return new PermissionResponseDto(newPermission);
   }
 
   @Delete(':permissionId')

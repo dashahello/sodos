@@ -5,17 +5,16 @@ import {
   Patch,
   Param,
   Session,
-  UnauthorizedException,
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserPreviewDto } from './dto/user-preview.dto';
-import { UserProfileDto } from './dto/user-profile.dto';
 import { IsAuthorizedGuard } from './Auth/guards/isAuthorized.guard';
-import { PermissionsService } from './Permissions/permissions.service';
 import { HasAccessAuthGuard } from './guards/hasAccessAuth.guard';
+import { OwnerGuard } from './guards/owner.guard.';
+import { UserPreviewDto } from './dto/user.preview.dto';
+import { UserResponseDto } from './dto/user.response.dto';
+import { UserUpdateRequestDto } from './dto/user.updateRequest.dto';
 
 @Controller('users')
 @UseGuards(IsAuthorizedGuard)
@@ -37,28 +36,23 @@ export class UsersController {
   @UseGuards(HasAccessAuthGuard)
   async findOne(
     @Session() session: { userId: number },
-    @Param('userId', ParseIntPipe) id: number,
+    @Param('userId', ParseIntPipe) userId: number,
   ) {
     // @TODO
-    // user can only view pforfile of other user if he is that user or he has permission
+    // user can only view pforfile of other user if he is that user or he has permission??
 
-    return await this.usersService.findOne(id);
+    const user = await this.usersService.findOne(userId);
 
-    // return new UserProfileDto(user);
+    return new UserResponseDto(user);
   }
 
   @Patch(':userId')
+  @UseGuards(OwnerGuard)
   async update(
-    @Session() session: { userId: number },
-    @Param('userId', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() userRequest: UserUpdateRequestDto,
   ) {
-    if (id !== session.userId) {
-      throw new UnauthorizedException();
-    }
-
-    await this.usersService.update(id, updateUserDto);
-
+    await this.usersService.update(userId, userRequest);
     return { result: 'success' };
   }
 }

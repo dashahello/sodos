@@ -35,6 +35,8 @@ export class AccessToSingleTaskGuard implements CanActivate {
         where: { ownerId: paramsUserId, visitorId: sessionUserId },
       }))
     ) {
+      // @TODO
+      // user should get not found if he goes to his account/permissions/:permissionId which does't exist
       throw new UnauthorizedException('You do not have access');
     }
     return true;

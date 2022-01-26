@@ -1,5 +1,7 @@
 import { User } from 'src/Users/entities/user.entity';
 import {
+  BaseEntity,
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -7,45 +9,39 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { TaskStatus } from '../enums/status.enum';
-import { TaskInterface } from '../interfaces/task.interface';
 
 @Entity()
-export class Task {
+export class Task extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  status: TaskStatus;
-
-  @Column()
+  @Column({ type: 'varchar', nullable: false, unique: false })
   title: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 250, nullable: false, unique: false })
   description: string;
 
-  @Column()
+  @Column({ type: 'bool', default: false, nullable: false })
   done: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ update: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ update: true })
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.tasks)
   owner: User;
-  @Column()
+  @Column({ type: 'number', nullable: false })
   ownerId: number;
 
   @ManyToOne(() => User)
   author: User;
-
-  @Column()
+  @Column({ type: 'number', nullable: false })
   authorId: number;
 
   @ManyToOne(() => User)
   modifier: User;
-  @Column({ nullable: true })
+  @Column({ type: 'number', nullable: true })
   modifierId: number;
 }

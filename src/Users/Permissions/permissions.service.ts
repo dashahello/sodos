@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreatePermissionDto } from './dto/create-permission.dto';
+import { PermissionRequestnDto } from './dto/permission.request.dto';
 import { Permission } from './entities/permission.entity';
 
 @Injectable()
@@ -13,23 +13,38 @@ export class PermissionsService {
 
   // @TODO
   // look how to properly set type for object (for options everywhere)
-  async findAll(options?: object) {
+  async findAll(options?: object): Promise<Permission[]> {
+    //   const permisiionWithUser = await this.permissionRepository
+    //     .createQueryBuilder('permission')
+    //     .leftJoinAndSelect('permission.owner', 'user')
+    //     .select(['permission', 'user.username'])
+    //     .getMany();
+
+    //   console.log(permisiionWithUser);
+
     return await this.permissionRepository.find(options);
   }
 
-  async findOne(id?: number, options?: object) {
+  async findOne(id?: number, options?: object): Promise<Permission> {
     return await this.permissionRepository.findOne(id, options);
   }
 
-  async count(options?: object) {
+  async count(options?: object): Promise<number> {
     return await this.permissionRepository.count(options);
   }
 
-  async create(createPermissionDto: CreatePermissionDto) {
-    return await this.permissionRepository.save(createPermissionDto);
+  async create(
+    permissionRequest: PermissionRequestnDto,
+    ownerId: number,
+    visitorId: number,
+  ): Promise<Permission> {
+    permissionRequest.ownerId = ownerId;
+    permissionRequest.visitorId = visitorId;
+
+    return await this.permissionRepository.save(permissionRequest);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<void> {
     await this.permissionRepository.delete(id);
   }
 }

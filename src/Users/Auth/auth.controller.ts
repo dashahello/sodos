@@ -3,17 +3,15 @@ import {
   ConflictException,
   Controller,
   InternalServerErrorException,
-  NotFoundException,
   Post,
   Session,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { UserProfileDto } from '../dto/user-profile.dto';
+import { UserResponseDto } from '../dto/user.response.dto';
 import { AuthService } from './auth.service';
-import { UserLoginDto } from './dto/user-login.dto';
-import { CreateUserDto } from './dto/user-signup.dto';
-import { IsAuthorizedGuard } from './guards/isAuthorized.guard';
+import { UserCreateRequestDto } from './dto/user.createRequest.dto';
+import { UserLoginDto } from './dto/user.login.dto';
 import { IsLoggedinAuthGuard } from './guards/isLoggedinAuth.guard';
 
 @Controller('users/auth')
@@ -24,9 +22,9 @@ export class AuthController {
   @UseGuards(IsLoggedinAuthGuard) // so user can not login untill user logs out
   async login(
     @Session() session: { loggedIn: boolean; userId: number | null },
-    @Body() data: UserLoginDto,
+    @Body() userLoginRequest: UserLoginDto,
   ) {
-    const user = await this.authService.verifyUser(data);
+    const user = await this.authService.verifyUser(userLoginRequest);
 
     if (!user) {
       throw new UnauthorizedException(`Incorrect credentials`);
@@ -40,10 +38,10 @@ export class AuthController {
 
   @Post('signup')
   @UseGuards(IsLoggedinAuthGuard) // so user can not signup (create a different account) untill user logs out
-  async signUp(@Body() createUserDto: CreateUserDto) {
+  async signUp(@Body() userRequest: UserCreateRequestDto) {
     try {
-      const newUser = await this.authService.create(createUserDto);
-      return new UserProfileDto(newUser);
+      const newUser = await this.authService.create(userRequest);
+      return new UserResponseDto(newUser);
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('Userername or email alredy exists');

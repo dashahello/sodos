@@ -14,9 +14,7 @@ export class OwnerGuard implements CanActivate {
     const paramsUserId = parseInt(params.userId);
 
     if (paramsUserId !== sessionUserId) {
-      throw new UnauthorizedException(
-        'You can only access your own permissions',
-      );
+      throw new UnauthorizedException('You do not have access');
     }
 
     return true;

@@ -1,16 +1,10 @@
-export class UserProfileDto {
+export class UserResponseDto {
   readonly id?: number;
-
   readonly username?: string;
-
   readonly email?: string;
-
   readonly status?: string;
-
   readonly password?: string;
-
   readonly createdAt?: Date;
-
   // photo
 
   constructor(data) {
