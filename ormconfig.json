@@ -4,9 +4,9 @@
   "port": 3306,
   "username": "dasha2",
   "password": "123",
-  "database": "todo",
+  "database": "sodos",
   "entities": ["dist/**/*.entity{.ts,.js}"],
   "synchronize": true,
   "logging": true,
-  "dropSchema": false
+  "dropSchema": true
 }

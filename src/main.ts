@@ -16,7 +16,7 @@ const options = {
   port: 3306,
   user: 'dasha2',
   password: '123',
-  database: 'todo',
+  database: 'sodos',
 };
 
 // console.log(process.env);
