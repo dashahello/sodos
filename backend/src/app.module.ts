@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
 import { UsersModule } from './Users/users.module';
 import { PermissionsModule } from './Users/Permissions/permissions.module';
 import { TasksModule } from './Users/Tasks/tasks.module';

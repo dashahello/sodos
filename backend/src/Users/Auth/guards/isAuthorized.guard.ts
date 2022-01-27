@@ -6,8 +6,6 @@ export class IsAuthorizedGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     if (!request.session.loggedIn || request.session.loggedIn === false) {
-      console.log('zzzzzzzz');
-
       return false;
     }
 
