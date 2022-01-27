@@ -29,3 +29,14 @@ The Social Todos App
 ## Production
 
 Will be here soon :)
+
+## Dependencies
+
+Sodos requires the following to run:
+
+- `node.js` version `16.13.0`
+- `npm` (comes with node) version `8.1.0`
+- `mysql` version `8.0.27-0`, specifically `8.0.27-0ubuntu0.20.04.1` is used
+
+Sodos is being build on `lubuntu`, using `ubuntu` version `20.04.1` but should
+be able to run everywhere where the above dependencies are supported.
