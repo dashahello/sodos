@@ -7,6 +7,7 @@ import {
   Switch,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
@@ -18,6 +19,8 @@ import SearchIcon from '@mui/icons-material/Search';
 
 function Users() {
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+
   const history = useHistory();
 
   const currentUser = useStoreState((s) => s.currentUser);
@@ -65,19 +68,36 @@ function Users() {
     <Loader />
   ) : (
     <>
-      <TextField
-        fullWidth
-        value={search}
-        onChange={(evt) => setSearch(evt.target.value)}
-        label="Search"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-      />
+      <div style={{ display: 'flex' }}>
+        {' '}
+        <TextField
+          style={{ flexGrow: 1 }}
+          value={search}
+          onChange={(evt) => setSearch(evt.target.value)}
+          label="Search"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            marginLeft: theme.spacing(2),
+          }}
+        >
+          <Typography style={{ textAlign: 'center' }}>
+            Has
+            <br />
+            permission
+          </Typography>
+        </div>
+      </div>
 
       <List>
         {users
@@ -142,7 +162,7 @@ function Users() {
               <ListItemIcon>
                 <PersonOutlineIcon />
               </ListItemIcon>
-              <ListItemText primary={user.id + '' + user.username} />
+              <ListItemText primary={user.username} />
             </ListItem>
           ))}
       </List>

@@ -1,36 +1,29 @@
 import { createTheme } from '@mui/material';
+import { green, orange } from '@mui/material/colors';
 
 export default createTheme({
   props: {
     MuiUseMediaQuery: {
-      noSsr: true
-    }
-  },
-  body: {
-    background: '#ffffff'
-  },
-  app: {
-    background: '#d9d9d9'
+      noSsr: true,
+    },
   },
   typography: {
-    fontFamily: "'Roboto', sans-serif"
+    fontFamily: "'Roboto', sans-serif",
   },
   palette: {
     type: 'light',
     primary: {
-      main: '#cb1bf1'
+      main: '#cb1bf1',
     },
-    secondary: {
-      main: '#f11b8c'
-    },
-    background: {
-      main: '#f5f5f5',
-      medium: '#181818',
-      paper: '#f2f2f2',
-      paperDark: '#d9d9d9'
-    },
+
     success: {
-      main: '#55B058'
-    }
-  }
+      main: green[500],
+      ligth: green[200],
+    },
+
+    warning: {
+      main: orange[500],
+      ligth: orange[200],
+    },
+  },
 });

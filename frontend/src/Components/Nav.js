@@ -12,15 +12,22 @@ import MenuIcon from '@mui/icons-material/Menu';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import { useStoreState } from 'easy-peasy';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 
 export default function Nav() {
   const history = useHistory();
 
-  const { isExact: isHome } = useRouteMatch('/');
+  const { isExact: isHome } = useRouteMatch('/') || {};
+  const { isExact: isUserProfile, params: { userId: profileUserId } = {} } =
+    useRouteMatch('/users/:userId') || {};
+  const { isExact: isUsers } = useRouteMatch('/users') || {};
+  const { isExact: isLogout } = useRouteMatch('/logout') || {};
+  const { isExact: isLogin } = useRouteMatch('/login') || {};
+  const { isExact: isRegister } = useRouteMatch('/register') || {};
 
   const currentUser = useStoreState((s) => s.currentUser);
 
@@ -43,10 +50,32 @@ export default function Nav() {
             <Typography
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, textAlign: 'center' }}
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                left: 0,
+                textAlign: 'center',
+                pointerEvents: 'none',
+              }}
             >
-              {history.location.pathname}
+              {isHome
+                ? 'Home'
+                : isUserProfile
+                ? parseInt(profileUserId) === parseInt(currentUser?.id)
+                  ? 'My profile'
+                  : 'User profile'
+                : isUsers
+                ? 'Users'
+                : isLogout
+                ? 'Logout'
+                : isLogin
+                ? 'Login'
+                : isRegister
+                ? 'Register'
+                : ''}
+              {/* {history.location.pathname} */}
             </Typography>
+            <div style={{ flexGrow: 1 }} />
             <IconButton onClick={() => setOpen(true)}>
               <MenuIcon style={{ color: 'white' }} />
             </IconButton>
@@ -84,12 +113,32 @@ export default function Nav() {
                 </ListItem>
               </>
             ) : (
-              <ListItem button component={Link} to="/logout">
-                <ListItemIcon>
-                  <LogoutIcon />
-                </ListItemIcon>
-                <ListItemText primary="Logout" />
-              </ListItem>
+              <>
+                <ListItem
+                  button
+                  component={Link}
+                  to={`/users/${currentUser.id}`}
+                >
+                  <ListItemIcon>
+                    <PersonOutlineIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="My profile" />
+                </ListItem>
+
+                <ListItem button component={Link} to="/users">
+                  <ListItemIcon>
+                    <PeopleOutlineIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Users" />
+                </ListItem>
+
+                <ListItem button component={Link} to="/logout">
+                  <ListItemIcon>
+                    <LogoutIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Logout" />
+                </ListItem>
+              </>
             )}
           </List>
         </Box>
