@@ -1,25 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-// import fetch from 'node-fetch';
 import * as session from 'express-session';
 import * as _MySQLStore from 'express-mysql-session';
 import { ValidationPipe } from '@nestjs/common';
-import * as express from 'express';
-import * as cors from 'cors';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const MySQLStore = _MySQLStore(session);
 
-// @TODO
-// write values to .env
 const options = {
-  host: 'localhost',
-  port: 3306,
-  user: 'dasha2',
-  password: '123',
-  database: 'sodos',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 };
-
-// console.log(process.env);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,14 +28,13 @@ async function bootstrap() {
     });
   }
 
+  // Could enable this for (early) "production"
   // app.use(express.static(process.cwd() + '/frontend/build'));
 
   app.use(
     session({
       key: 's',
-      // @TODO
-      // secret should come from .env
-      secret: 'something_not_so_secure',
+      secret: process.env.SESSION_COOKIE_SECRET,
       store: new MySQLStore(options),
       resave: false,
       saveUninitialized: false,
