@@ -4,7 +4,7 @@ The Social Todos App
 
 ## Development
 
-1. Clone repository
+1. Clone repository `git clone https://gitlab.com/dashahello/sodos`
 2. Go to cloned directory in terminal `cd sodos`
 
 ### Server
