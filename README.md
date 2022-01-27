@@ -23,7 +23,8 @@ The Social Todos App
 3. Optional: edit `pacakage.json` `start` script to change the `PORT` of the
    react development server
 4. Run `npm start`
-5. Click away :)
+5. Browse to `http://localhost:{port_from_package.json}`
+6. Click away :)
 
 ## Production
 
