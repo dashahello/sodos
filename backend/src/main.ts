@@ -4,6 +4,7 @@ import * as session from 'express-session';
 import * as _MySQLStore from 'express-mysql-session';
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 
 dotenv.config();
 
@@ -43,6 +44,8 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
+
+  fs.writeFileSync(process.env.LOG_FILE, '');
 
   await app.listen(process.env.APP_PORT);
 }
