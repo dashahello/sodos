@@ -61,7 +61,7 @@ export class UsersService {
       ...userRequest,
       password: await bcrypt.hash(
         userRequest.password,
-        process.env.PASSWORD_HASH_ROUNDS,
+        parseInt(process.env.PASSWORD_HASH_ROUNDS),
       ),
     });
   }
