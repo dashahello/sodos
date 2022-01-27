@@ -26,27 +26,34 @@ export class PermissionsController {
   // create dto for returned value?
   @Get()
   @UseGuards(OwnerGuard)
-  async findAll(@Session() session: { userId: number }) {
-    return await this.permissionsService.findAll({
+  async findAll(
+    @Session() session: { userId: number },
+  ): Promise<PermissionResponseDto[]> {
+    const permissions = await this.permissionsService.findAll({
       where: [{ ownerId: session.userId }, { visitorId: session.userId }],
-      // relations: ['owner'],
-      // should be done througn createQueryBuilder('user') in permissions service???
     });
+
+    return permissions.map(
+      (permission) => new PermissionResponseDto(permission),
+    );
   }
 
-  @Get(':permissionId')
-  @UseGuards(OwnerGuard, PermissionExistanceGuard)
-  async findOne(
-    @Session() session: { userId: number },
-    @Param('permissionId', ParseIntPipe) permissionId: number,
-  ) {
-    return await this.permissionsService.findOne(permissionId, {
-      where: [
-        { id: permissionId, ownerId: session.userId },
-        { id: permissionId, visitorId: session.userId },
-      ],
-    });
-  }
+  // Currently has no use
+  // @Get(':permissionId')
+  // @UseGuards(OwnerGuard, PermissionExistanceGuard)
+  // async findOne(
+  //   @Session() session: { userId: number },
+  //   @Param('permissionId', ParseIntPipe) permissionId: number,
+  // ): Promise<PermissionResponseDto> {
+  //   const permission = await this.permissionsService.findOne(permissionId, {
+  //     where: [
+  //       { id: permissionId, ownerId: session.userId },
+  //       { id: permissionId, visitorId: session.userId },
+  //     ],
+  //   });
+
+  //   return new PermissionResponseDto(permission);
+  // }
 
   @Post()
   @UseGuards(AbilityToCreatePermissionGuard)

@@ -26,16 +26,21 @@ export class TasksController {
 
   @Get()
   @UseGuards(AccessToAllTasksGuard)
-  async findAll(@Param('userId', ParseIntPipe) userId: number) {
-    return await this.tasksService.findAll({
+  async findAll(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<TaskResponseDto[]> {
+    const tasks = await this.tasksService.findAll({
       where: { ownerId: userId },
     });
+    return tasks.map((task) => new TaskResponseDto(task));
   }
 
   @Get(':taskId')
   @UseGuards(AccessToSingleTaskGuard, TaskExistanceGuard)
-  async findOne(@Param('taskId') taskId: number) {
-    return await this.tasksService.findOneById(taskId);
+  async findOne(@Param('taskId') taskId: number): Promise<TaskResponseDto> {
+    const task = await this.tasksService.findOneById(taskId);
+
+    return new TaskResponseDto(task);
   }
 
   @Post()
@@ -44,7 +49,7 @@ export class TasksController {
     @Session() session: { userId: number },
     @Param('userId', ParseIntPipe) userId: number,
     @Body() taskRequest: TaskCreateRequestDto,
-  ) {
+  ): Promise<TaskResponseDto> {
     const newTask = await this.tasksService.create(
       taskRequest,
       userId,

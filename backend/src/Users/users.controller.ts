@@ -19,15 +19,12 @@ import { UserUpdateRequestDto } from './dto/user.updateRequest.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    // @TODO
-    // find the way to check permissions
-    // import PermissionsService
-    private readonly usersService: UsersService, // private readonly permissionService: PermissionsService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('current')
-  async current(@Session() session: { userId: number; loggedIn: number }) {
+  async current(
+    @Session() session: { userId: number; loggedIn: number },
+  ): Promise<UserResponseDto> {
     if (!session.userId || !session.loggedIn) {
       throw new UnauthorizedException('You are not logged in');
     }
@@ -39,7 +36,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(IsAuthorizedGuard)
-  async findAll() {
+  async findAll(): Promise<UserPreviewDto[]> {
     const users = await this.usersService.findAll();
     return users.map((user) => new UserPreviewDto(user));
   }
@@ -49,22 +46,13 @@ export class UsersController {
   async findOne(
     @Session() session: { userId: number },
     @Param('userId', ParseIntPipe) userId: number,
-  ) {
-    // @TODO
-    // user can only view profile of other user if he is that user or he has permission??
-
+  ): Promise<UserResponseDto> {
     const user = await this.usersService.findOne(userId, {
       relations: ['tasks'],
     });
 
     return new UserResponseDto(user);
   }
-
-  // @TODO
-  // password and other data validation on Patch
-
-  // @TODO
-  // hash HaSH
 
   @Patch(':userId')
   @UseGuards(IsAuthorizedGuard, OwnerGuard)

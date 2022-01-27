@@ -11,17 +11,7 @@ export class PermissionsService {
     private permissionRepository: Repository<Permission>,
   ) {}
 
-  // @TODO
-  // look how to properly set type for object (for options everywhere)
   async findAll(options?: object): Promise<Permission[]> {
-    //   const permisiionWithUser = await this.permissionRepository
-    //     .createQueryBuilder('permission')
-    //     .leftJoinAndSelect('permission.owner', 'user')
-    //     .select(['permission', 'user.username'])
-    //     .getMany();
-
-    //   console.log(permisiionWithUser);
-
     return await this.permissionRepository.find(options);
   }
 

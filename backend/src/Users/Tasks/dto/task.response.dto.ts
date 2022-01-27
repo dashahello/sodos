@@ -1,3 +1,5 @@
+import { User } from 'src/Users/entities/user.entity';
+
 export class TaskResponseDto {
   readonly id?: number;
   readonly title?: string;
@@ -8,6 +10,9 @@ export class TaskResponseDto {
   readonly modifierId?: number | null;
   readonly createdAt: Date;
   readonly updatedAt: Date;
+  readonly owner: User;
+  readonly author: User;
+  readonly modifier: User | null;
 
   constructor(data?) {
     if (data) {
@@ -20,6 +25,9 @@ export class TaskResponseDto {
       this.modifierId = data.modifierId || null;
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
+      this.owner = data.owner;
+      this.author = data.author;
+      this.modifier = data.modifier;
     }
   }
 }

@@ -7,16 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-// @TODO
-// implement interfaces properly with many to one columns
 @Entity()
 export class Permission extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(() => User, (user) => user.permissionsFor)
   @ManyToOne(() => User)
-  // @JoinColumn()
   owner: User;
 
   @Column({ nullable: false })
@@ -25,8 +21,6 @@ export class Permission extends BaseEntity {
   @ManyToOne(() => User, (user) => user.permissionsTo)
   visitor: User;
 
-  // @TODO
-  // fix nullable: true when sessions are set up
   @Column({ nullable: false })
   visitorId: number;
 }
