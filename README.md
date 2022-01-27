@@ -2,6 +2,24 @@
 
 The Social Todos App
 
+## Tech stack
+
+### Server
+
+- Node.js
+- Typescript
+- TypeORM
+- Nest.js
+- Express.js
+- MySQL2
+
+### Client
+
+- React
+- JavaScript
+- Easy-peasy
+- Material-ui
+
 ## Development
 
 1. Clone repository `git clone https://gitlab.com/dashahello/sodos`
