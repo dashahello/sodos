@@ -11,7 +11,6 @@ export class TaskCreateRequestDto {
   @Length(3, 100)
   readonly description: string;
 
-  // @IsBoolean()
   readonly done: boolean;
 
   ownerId: number;

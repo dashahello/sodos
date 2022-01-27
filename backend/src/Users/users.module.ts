@@ -4,10 +4,7 @@ import { UsersController } from './users.controller';
 import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Permission } from './Permissions/entities/permission.entity';
-import { PermissionsModule } from './Permissions/permissions.module';
-// import { PermissionsModule } from './Permissions/permissions.module';
 import { PermissionsService } from './Permissions/permissions.service';
-// import { Permission } from './Permissions/entities/permission.entity';
 
 @Module({
   imports: [

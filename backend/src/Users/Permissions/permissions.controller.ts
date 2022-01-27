@@ -22,8 +22,6 @@ import { PermissionResponseDto } from './dto/permission.response.dto';
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  // @TODO
-  // create dto for returned value?
   @Get()
   @UseGuards(OwnerGuard)
   async findAll(

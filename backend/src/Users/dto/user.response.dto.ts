@@ -8,7 +8,6 @@ export class UserResponseDto {
   readonly password?: string;
   readonly createdAt?: Date;
   readonly tasks: Task[];
-  // photo
 
   constructor(data) {
     if (data) {
