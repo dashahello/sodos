@@ -1,11 +1,16 @@
 import { User } from 'src/Users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { PermissionInterface } from '../interfaces/permisson.interface';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 // @TODO
 // implement interfaces properly with many to one columns
 @Entity()
-export class Permission {
+export class Permission extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

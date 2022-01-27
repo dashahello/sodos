@@ -1,3 +1,5 @@
+import { Task } from '../Tasks/entities/task.entity';
+
 export class UserResponseDto {
   readonly id?: number;
   readonly username?: string;
@@ -5,6 +7,7 @@ export class UserResponseDto {
   readonly status?: string;
   readonly password?: string;
   readonly createdAt?: Date;
+  readonly tasks: Task[];
   // photo
 
   constructor(data) {
@@ -14,6 +17,7 @@ export class UserResponseDto {
       this.email = data.email;
       this.createdAt = data.createdAt;
       this.status = data.status;
+      this.tasks = data.tasks;
     }
   }
 }

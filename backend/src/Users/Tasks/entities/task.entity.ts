@@ -1,7 +1,6 @@
 import { User } from 'src/Users/entities/user.entity';
 import {
   BaseEntity,
-  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,

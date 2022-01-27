@@ -53,7 +53,9 @@ export class UsersController {
     // @TODO
     // user can only view profile of other user if he is that user or he has permission??
 
-    const user = await this.usersService.findOne(userId);
+    const user = await this.usersService.findOne(userId, {
+      relations: ['tasks'],
+    });
 
     return new UserResponseDto(user);
   }

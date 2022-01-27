@@ -110,6 +110,11 @@ const store = createStore({
       });
   }),
 
+  userById: null,
+  setUserById: action((state, payload) => {
+    state.userById = payload;
+  }),
+
   fetchUserById: thunk((actions, { userId, onError, onSuccess }) => {
     fetch(`${API_ROOT}/users/${userId}`, {
       method: 'GET',
@@ -127,7 +132,8 @@ const store = createStore({
           );
           console.log('err', res);
         } else {
-          onSuccess(res);
+          onSuccess();
+          actions.setUserById(res);
         }
       });
   }),
@@ -244,6 +250,130 @@ const store = createStore({
         } else {
           actions.fetchCurrentUser();
           onSuccess();
+        }
+      });
+  }),
+
+  addTaskToUserById: action((state, payload) => {
+    state.userById.tasks.push(payload);
+  }),
+
+  createTask: thunk((actions, { userId, toSubmit, onSuccess, onError }) => {
+    fetch(`${API_ROOT}/users/${userId}/tasks`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(toSubmit),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) {
+          onError(
+            Array.isArray(res.message) ? res.message.join(' ') : res.message,
+          );
+          console.log('err', res);
+        } else {
+          actions.addTaskToUserById(res);
+          onSuccess();
+        }
+      });
+  }),
+
+  fetchTaskById: thunk((actions, { userId, taskId, onError, onSuccess }) => {
+    fetch(`${API_ROOT}/users/${userId}/tasks/${taskId}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) {
+          onError(
+            Array.isArray(res.message) ? res.message.join(' ') : res.message,
+          );
+          console.log('err', res);
+        } else {
+          onSuccess(res);
+        }
+      });
+  }),
+
+  updateTaskForUserById: action((state, payload) => {
+    state.userById.tasks.forEach((task) => {
+      if (task.id === payload.id) {
+        task.title = payload.title;
+        task.description = payload.description;
+        task.updatedAt = payload.updatedAt;
+        task.modifierid = payload.modifierid;
+        task.done = payload.done;
+      }
+    });
+  }),
+  updateTaskById: thunk(
+    (actions, { userId, taskId, toSubmit, onSuccess, onError }) => {
+      fetch(`${API_ROOT}/users/${userId}/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(toSubmit),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.error) {
+            onError(
+              Array.isArray(res.message) ? res.message.join(' ') : res.message,
+            );
+            console.log('err', res);
+          } else {
+            actions.fetchTaskById({
+              userId,
+              taskId,
+              toSubmit,
+              onSuccess: (task) => {
+                actions.updateTaskForUserById(task);
+                onSuccess();
+              },
+              onError,
+            });
+          }
+        });
+    },
+  ),
+
+  deleteTaskForUserById: action((state, payload) => {
+    state.userById.tasks = state.userById.tasks.filter(
+      (task) => task.id !== payload,
+    );
+  }),
+
+  deleteTaskById: thunk((actions, { userId, taskId, onSuccess, onError }) => {
+    fetch(`${API_ROOT}/users/${userId}/tasks/${taskId}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) {
+          onError(
+            Array.isArray(res.message) ? res.message.join(' ') : res.message,
+          );
+          console.log('err', res);
+        } else {
+          actions.deleteTaskForUserById(taskId);
+          onSuccess(taskId);
         }
       });
   }),

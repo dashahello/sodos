@@ -57,12 +57,16 @@ export class UsersService {
   }
 
   async update(id: number, userRequest: UserUpdateRequestDto): Promise<void> {
-    await this.usersRepository.update(id, {
-      ...userRequest,
-      password: await bcrypt.hash(
-        userRequest.password,
-        parseInt(process.env.PASSWORD_HASH_ROUNDS),
-      ),
-    });
+    if (userRequest.password) {
+      await this.usersRepository.update(id, {
+        ...userRequest,
+        password: await bcrypt.hash(
+          userRequest.password,
+          parseInt(process.env.PASSWORD_HASH_ROUNDS),
+        ),
+      });
+    } else {
+      await this.usersRepository.update(id, userRequest);
+    }
   }
 }

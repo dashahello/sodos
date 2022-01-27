@@ -1,5 +1,6 @@
 import { Task } from 'src/Users/Tasks/entities/task.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -7,12 +8,11 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { UserInterface } from '../interfaces/user.interface';
 import { Permission } from '../Permissions/entities/permission.entity';
 
 @Entity()
 @Unique('username', ['username'])
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

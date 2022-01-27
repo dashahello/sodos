@@ -16,8 +16,20 @@ export class TasksService {
     return await this.tasksRepository.find(options);
   }
 
-  async findOneById(id: number, options?: object): Promise<Task> {
-    return await this.tasksRepository.findOne(id, options);
+  async findOneById(id: number): Promise<Task> {
+    return await this.tasksRepository
+      .createQueryBuilder('task')
+      .leftJoinAndSelect('task.owner', 'owner')
+      .leftJoinAndSelect('task.author', 'author')
+      .leftJoinAndSelect('task.modifier', 'modifier')
+      .where('task.id = :taskId', { taskId: id })
+      .select([
+        'task',
+        'owner.username',
+        'author.username',
+        'modifier.username',
+      ])
+      .getOne();
   }
 
   async count(options?: object): Promise<number> {
