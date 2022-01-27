@@ -65,7 +65,7 @@ export class PermissionsController {
   }
 
   @Delete(':permissionId')
-  @UseGuards(OwnerGuard, PermissionExistanceGuard)
+  @UseGuards(PermissionExistanceGuard)
   async remove(@Param('permissionId') permissionId: number) {
     await this.permissionsService.remove(permissionId);
     return { result: 'success' };

@@ -5,6 +5,7 @@ export class PermissionResponseDto {
 
   constructor(data?) {
     if (data) {
+      this.id = data.id;
       this.ownerId = data.ownerId;
       this.visitorId = data.visitorId;
     }

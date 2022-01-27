@@ -24,13 +24,22 @@ const options = {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use(cors());
-  app.use(express.static(process.cwd() + '/frontend/build'));
+  if (process.env.NODE_ENV === 'development') {
+    app.enableCors({
+      origin: 'http://localhost:3001',
+      methods: 'GET,PATCH,POST,DELETE,OPTIONS',
+      credentials: true,
+    });
+  }
+
+  // app.use(express.static(process.cwd() + '/frontend/build'));
 
   app.use(
     session({
-      key: 'session_cookie_name',
-      secret: 'session_cookie_secret',
+      key: 's',
+      // @TODO
+      // secret should come from .env
+      secret: 'something_not_so_secure',
       store: new MySQLStore(options),
       resave: false,
       saveUninitialized: false,

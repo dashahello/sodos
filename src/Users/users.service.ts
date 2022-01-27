@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createQueryBuilder, Repository } from 'typeorm';
 import { UserUpdateRequestDto } from './dto/user.updateRequest.dto';
@@ -56,6 +57,12 @@ export class UsersService {
   }
 
   async update(id: number, userRequest: UserUpdateRequestDto): Promise<void> {
-    await this.usersRepository.update(id, userRequest);
+    await this.usersRepository.update(id, {
+      ...userRequest,
+      password: await bcrypt.hash(
+        userRequest.password,
+        process.env.PASSWORD_HASH_ROUNDS,
+      ),
+    });
   }
 }

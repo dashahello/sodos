@@ -14,10 +14,15 @@ export class PermissionExistanceGuard implements CanActivate {
 
     const sessionUserId = parseInt(session.userId);
     const permissionId = parseInt(params.permissionId);
+    const visitorId = parseInt(params.userId);
 
     if (
       !(await this.permissionsService.count({
-        where: { id: permissionId, ownerId: sessionUserId },
+        where: {
+          id: permissionId,
+          ownerId: sessionUserId,
+          visitorId: visitorId,
+        },
       }))
     ) {
       throw new NotFoundException('Permission not found');
