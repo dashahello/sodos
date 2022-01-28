@@ -1,4 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { Length, IsString, IsNotEmpty, IsEmail } from 'class-validator';
 
 import { Permission } from 'src/Users/Permissions/entities/permission.entity';
